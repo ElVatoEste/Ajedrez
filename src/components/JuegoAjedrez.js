@@ -9,7 +9,7 @@ function JuegoAjedrez() {
 
     useEffect(() => {
         // URL del servidor de Socket.IO desplegado en Vercel
-        const socketURL = 'https://server-jldhu27gc-elvatoestes-projects.vercel.app';
+        const socketURL = 'https://server-ashy-omega.vercel.app/';
         const newSocket = io(socketURL);
         setSocket(newSocket);
 
