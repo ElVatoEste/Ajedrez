@@ -1,4 +1,3 @@
-// components/JuegoAjedrez.js
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Chessboard } from 'react-chessboard';
@@ -11,13 +10,12 @@ function JuegoAjedrez() {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        const newSocket = io('https://server-ashy-omega.vercel.app/'); // Reemplaza con la URL de tu servidor
+        const newSocket = io('https://server-ashy-omega.vercel.app');
         setSocket(newSocket);
-
-        newSocket.emit('unirseSala', idSala);
 
         newSocket.on('connect', () => {
             console.log('Conectado al servidor de Socket.IO');
+            newSocket.emit('unirseSala', idSala);
         });
 
         newSocket.on('movimiento', (movimiento) => {
@@ -37,10 +35,10 @@ function JuegoAjedrez() {
         const move = game.move({
             from: sourceSquare,
             to: targetSquare,
-            promotion: 'q', // Siempre promociona a reina por simplicidad
+            promotion: 'q',
         });
 
-        if (move === null) return false; // Movimiento ilegal
+        if (move === null) return false;
 
         setGame(new Chess(game.fen()));
 
@@ -58,14 +56,7 @@ function JuegoAjedrez() {
         return true;
     };
 
-    return (
-        <div>
-            <h2>Sala: {idSala}</h2>
-            <Chessboard position={game.fen()} onPieceDrop={onDrop} />
-        </div>
-    );
+    return <Chessboard position={game.fen()} onPieceDrop={onDrop} />;
 }
 
 export default JuegoAjedrez;
-
-
