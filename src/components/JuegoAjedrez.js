@@ -10,7 +10,7 @@ function JuegoAjedrez() {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        const newSocket = io('http://localhost:5000');
+        const newSocket = io('http://192.168.1.194:5000');
         setSocket(newSocket);
 
         newSocket.on('connect', () => {
