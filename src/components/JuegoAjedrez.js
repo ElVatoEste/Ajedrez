@@ -10,7 +10,7 @@ function JuegoAjedrez() {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        const newSocket = io('https://server-ashy-omega.vercel.app');
+        const newSocket = io('http://localhost:5000');
         setSocket(newSocket);
 
         newSocket.on('connect', () => {
