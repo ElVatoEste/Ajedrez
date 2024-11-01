@@ -1,24 +1,27 @@
+// components/JuegoAjedrez.js
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Chessboard } from 'react-chessboard';
 import { io } from 'socket.io-client';
 import { Chess } from 'chess.js';
 
 function JuegoAjedrez() {
+    const { idSala } = useParams();
     const [game, setGame] = useState(new Chess());
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        // URL del servidor de Socket.IO desplegado en Vercel
-        const socketURL = 'https://server-ashy-omega.vercel.app/';
-        const newSocket = io(socketURL);
+        const newSocket = io('https://server-ashy-omega.vercel.app/'); // Reemplaza con la URL de tu servidor
         setSocket(newSocket);
+
+        newSocket.emit('unirseSala', idSala);
 
         newSocket.on('connect', () => {
             console.log('Conectado al servidor de Socket.IO');
         });
 
-        newSocket.on('movimiento', (data) => {
-            const { from, to, promotion } = data;
+        newSocket.on('movimiento', (movimiento) => {
+            const { from, to, promotion } = movimiento;
             const move = game.move({ from, to, promotion });
             if (move) {
                 setGame(new Chess(game.fen()));
@@ -28,7 +31,7 @@ function JuegoAjedrez() {
         return () => {
             newSocket.disconnect();
         };
-    }, [game]);
+    }, [game, idSala]);
 
     const onDrop = (sourceSquare, targetSquare) => {
         const move = game.move({
@@ -43,16 +46,26 @@ function JuegoAjedrez() {
 
         if (socket) {
             socket.emit('movimiento', {
-                from: sourceSquare,
-                to: targetSquare,
-                promotion: 'q',
+                idSala,
+                movimiento: {
+                    from: sourceSquare,
+                    to: targetSquare,
+                    promotion: 'q',
+                },
             });
         }
 
         return true;
     };
 
-    return <Chessboard position={game.fen()} onPieceDrop={onDrop} />;
+    return (
+        <div>
+            <h2>Sala: {idSala}</h2>
+            <Chessboard position={game.fen()} onPieceDrop={onDrop} />
+        </div>
+    );
 }
 
 export default JuegoAjedrez;
+
+
